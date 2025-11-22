@@ -1,0 +1,53 @@
+import { User } from "../models/user.model";
+import apiErrors from "../utils/apiErrors";
+import apiResponse from "../utils/apiResponse";
+import asyncHandler from "../utils/asyncHandler";
+
+const generateAccessAndRefreshToken = async (userId) => {
+  const user = await User.findById(userId);
+  const accessToken = await user.generateAccessToken();
+  const refreshToken = await user.generateRefreshToken();
+  user.refreshToken = refreshToken;
+  await user.save({
+    validateBeforeSave: false,
+  });
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+// Register User
+const registerUser = asyncHandler(async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+  if (!name || !email || !password || !confirmPassword) {
+    throw new apiErrors(400, "All fields are required");
+  }
+  if (
+    [name, email, password, confirmPassword].some(
+      (field) => field.trim() === ""
+    )
+  ) {
+    throw new apiErrors(400, "Fields cannot be empty");
+  }
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new apiErrors(409, "Email already exists");
+  }
+  if (password !== confirmPassword) {
+    throw new apiErrors(400, "Passwords do not match");
+  }
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+  const createdUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+  if (!createdUser) {
+    throw new apiErrors(500, "Failed to register user");
+  }
+  res
+    .status(200)
+    .json(new apiResponse(200, createdUser, "User register successfully"));
+});
