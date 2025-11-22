@@ -1,7 +1,7 @@
 
 import mongoose from "mongoose";
 
-const templateSchema = mongoose.Schema(
+const templateSchema = new mongoose.Schema(
   {
     title: {
       type: String,
