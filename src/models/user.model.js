@@ -33,7 +33,7 @@ const userSchema=new mongoose.Schema({
     },
     avatar:{
         type:String,
-        default:"https://res.cloudinary.com/dz1qj3x8h/image/upload/v1698231234/avatar/avatar-default.png",
+        default:"https://as1.ftcdn.net/v2/jpg/15/69/08/22/1000_F_1569082208_z9TfrJ9jVbJuk1aTrPnXIEEYguJhiij6.jpg",
         trim:true
     },
     role:{
