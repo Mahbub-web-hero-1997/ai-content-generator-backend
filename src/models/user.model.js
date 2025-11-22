@@ -81,7 +81,7 @@ userSchema.pre("save", async function(next){
 });
 // Check password is correct
 const bcrypt=require("bcryptjs");
-userSchema.methods.confirmPassword=async function(password){
+userSchema.methods.isPasswordCorrect=async function(password){
     return await bcrypt.compare(password, this.password);
 }
 // Generate Access Token

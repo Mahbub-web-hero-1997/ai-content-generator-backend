@@ -51,3 +51,37 @@ const registerUser = asyncHandler(async (req, res) => {
     .status(200)
     .json(new apiResponse(200, createdUser, "User register successfully"));
 });
+// Login User
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new apiErrors(404, "User not found");
+  }
+  const isPasswordMatched = await user.isPasswordCorrect(password);
+  if (!isPasswordMatched) {
+    throw new apiErrors(401, "Invalid password");
+  }
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    user._id
+  );
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  };
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new apiResponse(
+        200,
+        { user: loggedInUser, accessToken, refreshToken },
+        "Login successful"
+      )
+    );
+});
