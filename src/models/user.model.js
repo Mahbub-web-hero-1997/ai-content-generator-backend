@@ -87,7 +87,7 @@ userSchema.methods.confirmPassword=async function(password){
 // Generate Access Token
 userSchema.methods.generateAccessToken=async function(){
     const token=jwt.sign(
-        {_id:this._id, role:this.role},
+        {id:this._id, role:this.role},
         process.env.ACCESS_TOKEN_SECRET,
         {expiresIn:process.env.ACCESS_TOKEN_EXPIRE}
     )
@@ -96,7 +96,7 @@ userSchema.methods.generateAccessToken=async function(){
 // Generate Refresh Token
 userSchema.methods.generateRefreshToken=async function(){
     const token=jwt.sign(
-        {_id:this._id, role:this.role},
+        {id:this._id, role:this.role},
         process.env.REFRESH_TOKEN_SECRET,
         {expiresIn:process.env.REFRESH_TOKEN_EXPIRE}        
     )
