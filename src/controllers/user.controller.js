@@ -1,7 +1,7 @@
-import { User } from "../models/user.model";
-import apiErrors from "../utils/apiErrors";
-import apiResponse from "../utils/apiResponse";
-import asyncHandler from "../utils/asyncHandler";
+import { User } from "../models/user.model.js";
+import apiErrors from "../utils/apiErrors.js";
+import apiResponse from "../utils/apiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   const user = await User.findById(userId);
@@ -19,8 +19,12 @@ const generateAccessAndRefreshToken = async (userId) => {
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
+  console.log(req.body);
   if (!name || !email || !password || !confirmPassword) {
     throw new apiErrors(400, "All fields are required");
+  }
+  if (password !== confirmPassword) {
+    throw new apiErrors(400, "Passwords do not match");
   }
   if (
     [name, email, password, confirmPassword].some(
@@ -86,24 +90,21 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 // Logout User
-const logoutUser=asyncHandler(async(req,res)=>{
- await User.findByIdAndUpdate(
-  req.user?._id,{$unset:{refreshToken:1}},
-  {new:true}
- );
- const options={
-  httpOnly:true,
-  secure:true
- };
- res
- .status(200)
- .clearCookie("accessToken",options)
- .clearCookie("refreshToken",options)
- .json(new apiResponse(200,null,"Logout successful"))
-})
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user?._id,
+    { $unset: { refreshToken: 1 } },
+    { new: true }
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new apiResponse(200, null, "Logout successful"));
+});
 
-export{
-  registerUser,
-  loginUser,
-  logoutUser
-}
+export { registerUser, loginUser, logoutUser };

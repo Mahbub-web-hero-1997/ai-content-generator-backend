@@ -15,17 +15,22 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
 // CORS
-app.use(cors({
-    origin: "http://localhost:3000", // change to your frontend
-    credentials: true
-}));
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
 // Static files
 app.use(express.static(path.join(__dirname, "../public")));
 
-// Routes
+// All Routes
+import userRoute from "./routes/user.route.js";
+app.use("/api/v1/user", userRoute);
+
 app.get("/", (req, res) => {
-    res.status(200).json({ message: "API is running" });
+  res.status(200).json({ message: "API is running" });
 });
 
 export default app;
