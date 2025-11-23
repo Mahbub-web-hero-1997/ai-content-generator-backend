@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const templateSchema = new mongoose.Schema(
@@ -83,4 +82,3 @@ const templateSchema = new mongoose.Schema(
 );
 
 export const Template = mongoose.model("Template", templateSchema);
-  
