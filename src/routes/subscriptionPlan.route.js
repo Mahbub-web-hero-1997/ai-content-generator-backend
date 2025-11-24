@@ -14,3 +14,5 @@ router.route("/all").get(verifyToken, getAllSubscriptionPlans);
 router.route("/single/:id").get(verifyToken, getSingleSubscriptionPlan);
 router.route("/update/:id").put(verifyToken, updateSubscriptionPlan);
 router.route("/delete/:id").delete(verifyToken, deleteSubscriptionPlan);
+
+export default router;
