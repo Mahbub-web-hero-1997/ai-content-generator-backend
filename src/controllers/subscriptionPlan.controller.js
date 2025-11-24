@@ -58,3 +58,60 @@ const getAllSubscriptionPlans = asyncHandler(async (req, res) => {
       )
     );
 });
+
+// Get single subscription plan
+
+const getSingleSubscriptionPlan = asyncHandler(async (req, res) => {
+  const plan = await SubscriptionPlan.findById(req.params.id);
+  if (!plan) {
+    throw new apiErrors(404, "Subscription plan not found");
+  }
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        { data: plan },
+        "Fetch subscription plan successfully"
+      )
+    );
+});
+
+// Update Subscription plan
+
+const updateSubscriptionPlan = asyncHandler(async (req, res) => {
+  const updatedPlan = await SubscriptionPlan.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  if (!updatedPlan) {
+    throw new apiErrors(404, "Subscription plan not found");
+  }
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        { data: updatedPlan },
+        "Subscription Plan update successfully"
+      )
+    );
+});
+// Delete subscription plan
+
+const deleteSubscriptionPlan = asyncHandler(async (req, res) => {
+  const deletedPlan = await SubscriptionPlan.findByIdAndDelete(req.params.id);
+  if (!deletedPlan) {
+    throw new apiErrors(404, "Subscription plan not found");
+  }
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        { data: deletedPlan },
+        "Subscription Plan delete successful"
+      )
+    );
+});
