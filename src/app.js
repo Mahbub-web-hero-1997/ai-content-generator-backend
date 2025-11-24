@@ -30,7 +30,7 @@ import userRoute from "./routes/user.route.js";
 import templateRoute from "./routes/template.route.js";
 import generationHistoryRoute from "./routes/generationHistory.route.js";
 
-app.use("/api/v1/user", userRoute);
+app.use("/api/v1/auth", userRoute);
 app.use("/api/v1/template", templateRoute);
 app.use("/api/v1/history", generationHistoryRoute);
 
