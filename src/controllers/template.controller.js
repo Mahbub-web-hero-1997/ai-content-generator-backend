@@ -1,7 +1,7 @@
-import { Template } from "../models/template.model";
-import apiErrors from "../utils/apiErrors";
-import apiResponse from "../utils/apiResponse";
-import asyncHandler from "../utils/asyncHandler";
+import { Template } from "../models/template.model.js";
+import apiErrors from "../utils/apiErrors.js";
+import apiResponse from "../utils/apiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 // Get all templates
 const getAllTemplates = asyncHandler(async (req, res) => {
@@ -15,7 +15,7 @@ const getAllTemplates = asyncHandler(async (req, res) => {
 });
 
 // Get templates by slug
-const getAllTemplateBySlug = asyncHandler(async (req, res) => {
+const getTemplateBySlug = asyncHandler(async (req, res) => {
   const { slug } = req.params;
   const template = await Template.findOne({ slug });
   if (!template) {
@@ -66,5 +66,43 @@ const createTemplate = asyncHandler(async (req, res) => {
       )
     );
 });
+// Update Template
 
-export { getAllTemplates, getAllTemplateBySlug, createTemplate };
+const updateTemplate = asyncHandler(async (req, res) => {
+  const id = req.params;
+  if (!id) {
+    throw new apiErrors(400, "Template Id is required");
+  }
+  const update = await Template.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!update) {
+    throw new apiErrors(404, "Template not found");
+  }
+  res.status(200).json(200, { data: update }, "Template updated successfully");
+});
+
+// Delete Template
+
+const deleteTemplate = asyncHandler(async (req, res) => {
+  const id = req.params;
+  if (!id) {
+    throw new apiErrors(400, "Template Id is required");
+  }
+  const deletedTemplate = await Template.findByIdAndDelete(id);
+  if (!deleteTemplate) {
+    throw new apiErrors(404, "Template not found");
+  }
+  res
+    .status(200)
+    .json(200, { data: deleteTemplate }, "Template Deleted Successfully");
+});
+
+export {
+  getAllTemplates,
+  getTemplateBySlug,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
+};
