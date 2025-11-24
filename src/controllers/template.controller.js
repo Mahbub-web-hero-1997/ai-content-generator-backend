@@ -5,6 +5,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 // Get all templates
 const getAllTemplates = asyncHandler(async (req, res) => {
+  console.log("Load user form template controller", req.user);
   const templates = await Template.find().sort({ createdAt: -1 });
   if (!templates || templates.length === 0) {
     throw new apiErrors(404, "No templates fund");
@@ -57,10 +58,10 @@ const createTemplate = asyncHandler(async (req, res) => {
     throw new apiErrors(500, "Failed to create new template");
   }
   res
-    .status(200)
+    .status(201)
     .json(
       new apiResponse(
-        200,
+        201,
         { template: newTemplate },
         "Template create successful"
       )
@@ -80,7 +81,11 @@ const updateTemplate = asyncHandler(async (req, res) => {
   if (!update) {
     throw new apiErrors(404, "Template not found");
   }
-  res.status(200).json(200, { data: update }, "Template updated successfully");
+  res
+    .status(200)
+    .json(
+      new apiResponse(200, { data: update }, "Template updated successfully")
+    );
 });
 
 // Delete Template
@@ -96,7 +101,13 @@ const deleteTemplate = asyncHandler(async (req, res) => {
   }
   res
     .status(200)
-    .json(200, { data: deleteTemplate }, "Template Deleted Successfully");
+    .json(
+      new apiResponse(
+        200,
+        { data: deleteTemplate },
+        "Template Deleted Successfully"
+      )
+    );
 });
 
 export {
