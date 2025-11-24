@@ -27,7 +27,10 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 // All Routes
 import userRoute from "./routes/user.route.js";
+import templateRoute from "./routes/template.route.js";
+
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/template", templateRoute);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "API is running" });
