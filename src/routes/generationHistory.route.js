@@ -5,8 +5,8 @@ import {
   getAllGenerationHistory,
   getSingleGenerationHistory,
   updateGenerationHistory,
-} from "../controllers/generationHistory.controller";
-import verifyToken from "../middlewares/verifyToken";
+} from "../controllers/generationHistory.controller.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 const router = new Router();
 

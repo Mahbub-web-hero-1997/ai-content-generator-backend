@@ -4,10 +4,11 @@ import {
   logoutUser,
   registerUser,
 } from "../controllers/user.controller.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 const router = new Router();
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/logout").post(logoutUser);
+router.route("/logout").post(verifyToken, logoutUser);
 
 export default router;

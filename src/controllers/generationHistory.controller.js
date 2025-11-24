@@ -1,6 +1,6 @@
-import { GenerationHistory } from "../models/generationHistory.js";
+import { GenerationHistory } from "../models/generationHistory.model.js";
 import apiErrors from "../utils/apiErrors.js";
-import apiResponse from "../utils/apiResponse";
+import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 // Create Generation History
