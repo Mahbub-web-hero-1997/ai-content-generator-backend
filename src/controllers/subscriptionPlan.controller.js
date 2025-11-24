@@ -115,3 +115,11 @@ const deleteSubscriptionPlan = asyncHandler(async (req, res) => {
       )
     );
 });
+
+export {
+  createSubscriptionPlan,
+  getAllSubscriptionPlans,
+  getSingleSubscriptionPlan,
+  updateSubscriptionPlan,
+  deleteSubscriptionPlan,
+};
