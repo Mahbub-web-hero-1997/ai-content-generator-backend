@@ -12,10 +12,12 @@ const verifyToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     // console.log(decoded);
     const user = await User.findById(decoded.id).select("_id email name role");
+
     if (!user) {
       throw new apiErrors(401, "Unauthorized: User Not found");
     }
     req.user = user;
+    // console.log("Load user from verify Token", req.user);
     next();
   } catch (error) {
     return next(
