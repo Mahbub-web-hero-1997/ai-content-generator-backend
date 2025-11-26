@@ -90,3 +90,17 @@ const verifyPayment = asyncHandler(async (req, res) => {
       )
     );
 });
+
+// Get all payments
+
+const getAllPayments = asyncHandler(async (req, res) => {
+  const payments = await Payment.find()
+    .populate("user", "name email")
+    .populate("subscriptionPlan", "name price credits");
+  if (!payments) {
+    throw new apiErrors("Payment not found");
+  }
+  res
+    .status(200)
+    .json(new apiResponse(200, { payments }, "Payment fetched successfully"));
+});
