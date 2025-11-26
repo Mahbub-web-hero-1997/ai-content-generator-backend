@@ -90,7 +90,7 @@ const verifyPayment = asyncHandler(async (req, res) => {
     );
 });
 
-// Get all payments
+// Get all payments (Only Admin)
 
 const getAllPayments = asyncHandler(async (req, res) => {
   const payments = await Payment.find()
@@ -116,3 +116,23 @@ const getPaymentById = asyncHandler(async (req, res) => {
     .status(200)
     .json(new apiResponse(200, { payment }, "Payment fetched successfully"));
 });
+
+// Delete Payment (Only Admin)
+
+const deletePayment = asyncHandler(async (req, res) => {
+  const payment = await Payment.findByIdAndDelete(req.params.id);
+  if (!payment) {
+    throw new apiErrors(404, "Payment not found");
+  }
+  res
+    .status(200)
+    .json(new apiResponse(200, {}, "Payment Deleted successfully"));
+});
+
+export {
+  createPayment,
+  verifyPayment,
+  getAllPayments,
+  getPaymentById,
+  deletePayment,
+};
