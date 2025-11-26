@@ -22,7 +22,9 @@ const getTemplateBySlug = asyncHandler(async (req, res) => {
   if (!template) {
     throw new apiErrors(404, "Template not found");
   }
-  res.status(200).json(200, template, "Template fetched successfully");
+  res
+    .status(200)
+    .json(new apiResponse(200, template, "Template fetched successfully"));
 });
 
 // Create a new template
@@ -70,7 +72,7 @@ const createTemplate = asyncHandler(async (req, res) => {
 // Update Template
 
 const updateTemplate = asyncHandler(async (req, res) => {
-  const id = req.params;
+  const { id } = req.params;
   if (!id) {
     throw new apiErrors(400, "Template Id is required");
   }
@@ -91,7 +93,7 @@ const updateTemplate = asyncHandler(async (req, res) => {
 // Delete Template
 
 const deleteTemplate = asyncHandler(async (req, res) => {
-  const id = req.params;
+  const { id } = req.params;
   if (!id) {
     throw new apiErrors(400, "Template Id is required");
   }

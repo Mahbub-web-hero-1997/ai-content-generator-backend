@@ -1,8 +1,8 @@
-import stripe from "../config/stripe.config";
-import { Payment } from "../models/payment.model";
-import apiErrors from "../utils/apiErrors";
-import apiResponse from "../utils/apiResponse";
-import asyncHandler from "../utils/asyncHandler";
+import stripe from "../config/stripe.config.js";
+import { Payment } from "../models/payment.model.js";
+import apiErrors from "../utils/apiErrors.js";
+import apiResponse from "../utils/apiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 const createPayment = asyncHandler(async (req, res) => {
   const { user, subscriptionPlan, amount, currency, notes } = req.body;

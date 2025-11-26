@@ -5,8 +5,8 @@ import {
   getAllPayments,
   getPaymentById,
   verifyPayment,
-} from "../controllers/payment.controller";
-import verifyToken from "../middlewares/verifyToken";
+} from "../controllers/payment.controller.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 const router = new Router();
 
