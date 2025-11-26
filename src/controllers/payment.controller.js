@@ -79,7 +79,6 @@ const verifyPayment = asyncHandler(async (req, res) => {
   if (!updatePayment) {
     throw new apiErrors(404, "Payment record not found");
   }
-
   res
     .status(200)
     .json(
@@ -103,4 +102,17 @@ const getAllPayments = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new apiResponse(200, { payments }, "Payment fetched successfully"));
+});
+
+// Get Single Payment
+const getPaymentById = asyncHandler(async (req, res) => {
+  const payment = await Payment.findById(req.params.id)
+    .populate("user", "name email")
+    .populate("SubscriptionPlan", "name price credits");
+  if (!payments) {
+    throw new apiErrors("Payment not found");
+  }
+  res
+    .status(200)
+    .json(new apiResponse(200, { payment }, "Payment fetched successfully"));
 });
