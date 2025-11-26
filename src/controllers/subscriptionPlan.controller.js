@@ -4,6 +4,8 @@ import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 // Create Subscription
 const createSubscriptionPlan = asyncHandler(async (req, res) => {
+  console.log("BODY:", req.body);
+
   const {
     name,
     description,
@@ -13,21 +15,30 @@ const createSubscriptionPlan = asyncHandler(async (req, res) => {
     durationInDays,
     isActive,
   } = req.body;
+
+  // Validate fields
   if (
-    (!name,
-    !description,
-    !price,
-    !credits,
-    !features,
-    !durationInDays,
-    !isActive)
+    !name ||
+    !description ||
+    !price ||
+    !credits ||
+    !features ||
+    !durationInDays ||
+    isActive === undefined
   ) {
     throw new apiErrors(400, "All fields are required");
   }
+
+  // Check existing plan
   const exists = await SubscriptionPlan.findOne({ name });
   if (exists) {
-    throw new apiErrors(400, "A subscription plan is active");
+    throw new apiErrors(
+      400,
+      "A subscription plan with this name already exists"
+    );
   }
+
+  // Create plan
   const newPlan = await SubscriptionPlan.create({
     name,
     description,
@@ -37,9 +48,16 @@ const createSubscriptionPlan = asyncHandler(async (req, res) => {
     durationInDays,
     isActive,
   });
+
   res
     .status(201)
-    .json(new apiResponse(201, { data: newPlan }, "Subscription Successful"));
+    .json(
+      new apiResponse(
+        201,
+        { data: newPlan },
+        "Subscription Plan Created Successfully"
+      )
+    );
 });
 
 // Get all  subscription plans

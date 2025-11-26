@@ -13,6 +13,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
+app.use((req, res, next) => {
+  console.log("Raw Body Middleware:", req.body);
+  next();
+});
 
 // CORS
 app.use(

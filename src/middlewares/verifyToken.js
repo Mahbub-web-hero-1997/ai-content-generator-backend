@@ -17,6 +17,7 @@ const verifyToken = async (req, res, next) => {
       throw new apiErrors(401, "Unauthorized: User Not found");
     }
     req.user = user;
+    console.log("Load Body from token", req.body);
     // console.log("Load user from verify Token", req.user);
     next();
   } catch (error) {
