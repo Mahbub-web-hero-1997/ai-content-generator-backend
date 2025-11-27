@@ -35,7 +35,7 @@ const getAllGenerationHistory = asyncHandler(async (req, res) => {
   const historyList = await GenerationHistory.find({
     user: req.user._id,
   })
-    .populate("template", "title slug category")
+    .populate("template", "title slug category -_id")
     .sort({ createdAt: -1 });
   res
     .status(200)
