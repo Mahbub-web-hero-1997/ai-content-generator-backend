@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
+// import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import path from "path";
@@ -47,8 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL injection & XSS
-app.use(mongoSanitize());
-app.use(xss());
+// app.use(mongoSanitize());
 
 // Logging HTTP requests (development only)
 if (process.env.NODE_ENV === "development") {
