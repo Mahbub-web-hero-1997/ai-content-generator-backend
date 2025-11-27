@@ -76,9 +76,23 @@ const getAllSubscriptionPlans = asyncHandler(async (req, res) => {
       )
     );
 });
-
+// Get Own subscription plan
+const getOwnSubscriptionPlan = asyncHandler(async (req, res) => {
+  const plan = await SubscriptionPlan.findById({ user: req.user._id });
+  if (!plan) {
+    throw new apiErrors(404, "Subscription Plan Not Found");
+  }
+  res
+    .status(200)
+    .json(
+      new apiResponse(
+        200,
+        { data: plan },
+        "Fetched subscription plan successfully"
+      )
+    );
+});
 // Get single subscription plan
-
 const getSingleSubscriptionPlan = asyncHandler(async (req, res) => {
   const plan = await SubscriptionPlan.findById(req.params.id);
   if (!plan) {
@@ -96,7 +110,6 @@ const getSingleSubscriptionPlan = asyncHandler(async (req, res) => {
 });
 
 // Update Subscription plan
-
 const updateSubscriptionPlan = asyncHandler(async (req, res) => {
   const updatedPlan = await SubscriptionPlan.findByIdAndUpdate(
     req.params.id,
@@ -117,7 +130,6 @@ const updateSubscriptionPlan = asyncHandler(async (req, res) => {
     );
 });
 // Delete subscription plan
-
 const deleteSubscriptionPlan = asyncHandler(async (req, res) => {
   const deletedPlan = await SubscriptionPlan.findByIdAndDelete(req.params.id);
   if (!deletedPlan) {
@@ -137,6 +149,7 @@ const deleteSubscriptionPlan = asyncHandler(async (req, res) => {
 export {
   createSubscriptionPlan,
   getAllSubscriptionPlans,
+  getOwnSubscriptionPlan,
   getSingleSubscriptionPlan,
   updateSubscriptionPlan,
   deleteSubscriptionPlan,
