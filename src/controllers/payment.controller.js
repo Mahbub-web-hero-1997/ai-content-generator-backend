@@ -5,7 +5,15 @@ import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
 const createPayment = asyncHandler(async (req, res) => {
-  const { user, subscriptionPlan, amount, currency, notes } = req.body;
+  const {
+    user,
+    subscriptionPlan,
+    amount,
+    currency,
+    notes,
+    paymentMethod,
+    paymentStatus,
+  } = req.body;
   if (!user || !subscriptionPlan || !amount) {
     throw new apiErrors(
       400,
@@ -27,7 +35,7 @@ const createPayment = asyncHandler(async (req, res) => {
         quantity: 1,
       },
     ],
-    node: "payment",
+    mode: "payment",
     success_url: `${process.env.FRONT_END_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.FRONT_END_URL}/payment-cancel`,
   });
@@ -65,14 +73,14 @@ const verifyPayment = asyncHandler(async (req, res) => {
   }
 
   const session = await stripe.checkout.sessions.retrieve(session_id);
-
+  console.log("Check Payment status", session.payment_status);
   if (session.payment_status !== "paid") {
     throw new apiErrors(400, "Payment not completed");
   }
 
   const updatePayment = await Payment.findOneAndUpdate(
     { transactionId: session_id },
-    { paymentStatus: "completed", paymentDate: new Date() },
+    { paymentStatus: "paid", paymentDate: new Date() },
     { new: true }
   );
 
@@ -91,10 +99,12 @@ const verifyPayment = asyncHandler(async (req, res) => {
 });
 
 // Get all payments (Only Admin)
-
 const getAllPayments = asyncHandler(async (req, res) => {
+  if (req.user.role !== "admin") {
+    throw new apiErrors(403, "Forbidden Access");
+  }
   const payments = await Payment.find()
-    .populate("user", "name email")
+    .populate("user", "name email -_id")
     .populate("subscriptionPlan", "name price credits");
   if (!payments) {
     throw new apiErrors("Payment not found");
@@ -104,12 +114,26 @@ const getAllPayments = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, { payments }, "Payment fetched successfully"));
 });
 
+// Get Own payments (user)
+
+const getOwnPayments = asyncHandler(async (req, res) => {
+  const payments = await Payment.find({ user: req.user._id });
+  if (!payments || payments.length === 0) {
+    throw new apiErrors(404, "No payments found");
+  }
+  res
+    .status(200)
+    .json(
+      new apiResponse(200, { data: payments }, "Payments fetched successfully")
+    );
+});
+
 // Get Single Payment
 const getPaymentById = asyncHandler(async (req, res) => {
   const payment = await Payment.findById(req.params.id)
-    .populate("user", "name email")
-    .populate("SubscriptionPlan", "name price credits");
-  if (!payments) {
+    .populate("user", "name email -_id")
+    .populate("subscriptionPlan", "name price credits");
+  if (!payment) {
     throw new apiErrors("Payment not found");
   }
   res
@@ -133,6 +157,7 @@ export {
   createPayment,
   verifyPayment,
   getAllPayments,
+  getOwnPayments,
   getPaymentById,
   deletePayment,
 };
