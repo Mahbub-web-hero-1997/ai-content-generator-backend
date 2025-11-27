@@ -76,22 +76,7 @@ const getAllSubscriptionPlans = asyncHandler(async (req, res) => {
       )
     );
 });
-// Get Own subscription plan
-const getOwnSubscriptionPlan = asyncHandler(async (req, res) => {
-  const plan = await SubscriptionPlan.findById({ user: req.user._id });
-  if (!plan) {
-    throw new apiErrors(404, "Subscription Plan Not Found");
-  }
-  res
-    .status(200)
-    .json(
-      new apiResponse(
-        200,
-        { data: plan },
-        "Fetched subscription plan successfully"
-      )
-    );
-});
+
 // Get single subscription plan
 const getSingleSubscriptionPlan = asyncHandler(async (req, res) => {
   const plan = await SubscriptionPlan.findById(req.params.id);
