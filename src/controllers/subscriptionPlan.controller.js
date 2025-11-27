@@ -62,7 +62,7 @@ const createSubscriptionPlan = asyncHandler(async (req, res) => {
 
 // Get all  subscription plans
 const getAllSubscriptionPlans = asyncHandler(async (req, res) => {
-  const plan = (await SubscriptionPlan.find()).toSorted({ createdAt: -1 });
+  const plan = await SubscriptionPlan.find().sort({ createdAt: -1 });
   if (!plan) {
     throw new apiErrors(404, "No subscriptions Plan found");
   }
