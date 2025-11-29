@@ -134,7 +134,7 @@ const deleteSubscriptionPlan = asyncHandler(async (req, res) => {
 export {
   createSubscriptionPlan,
   getAllSubscriptionPlans,
-  getOwnSubscriptionPlan,
+  // getOwnSubscriptionPlan,
   getSingleSubscriptionPlan,
   updateSubscriptionPlan,
   deleteSubscriptionPlan,
