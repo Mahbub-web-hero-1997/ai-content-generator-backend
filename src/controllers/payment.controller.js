@@ -27,7 +27,7 @@ const createPayment = asyncHandler(async (req, res, next) => {
     success_url: `${process.env.FRONT_END_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.FRONT_END_URL}/payment-cancel`,
     metadata: {
-      userId: user.tostring(),
+      userId: user.toString(),
       subscriptionPlan,
       amount,
       notes: notes || "",
