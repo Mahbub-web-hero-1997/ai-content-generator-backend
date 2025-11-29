@@ -4,21 +4,11 @@ import apiErrors from "../utils/apiErrors.js";
 import apiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-const createPayment = asyncHandler(async (req, res) => {
-  const {
-    user,
-    subscriptionPlan,
-    amount,
-    currency,
-    notes,
-    paymentMethod,
-    paymentStatus,
-  } = req.body;
-  if (!user || !subscriptionPlan || !amount) {
-    throw new apiErrors(
-      400,
-      "Required fields missing: user, subscriptionPlan, amount"
-    );
+const createPayment = asyncHandler(async (req, res, next) => {
+  const { subscriptionPlan, amount, currency, notes } = req.body;
+  const user = req.user._id;
+  if (!subscriptionPlan || !amount) {
+    throw new apiErrors(400, "Subscription plan and amount required");
   }
   const stripeAmount = Math.round(amount * 100);
   const session = await stripe.checkout.sessions.create({
@@ -27,10 +17,8 @@ const createPayment = asyncHandler(async (req, res) => {
       {
         price_data: {
           currency: currency || "USD",
-          product_data: {
-            name: "Subscription Plan Purchase",
-          },
           unit_amount: stripeAmount,
+          product_data: { name: "Subscription Plan Purchase" },
         },
         quantity: 1,
       },
@@ -38,46 +26,44 @@ const createPayment = asyncHandler(async (req, res) => {
     mode: "payment",
     success_url: `${process.env.FRONT_END_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.FRONT_END_URL}/payment-cancel`,
+    metadata: {
+      userId: user.tostring(),
+      subscriptionPlan,
+      amount,
+      notes: notes || "",
+    },
   });
-  //   Save Payment on DB
+  // Save Pending Payment
 
   const payment = await Payment.create({
     user,
     subscriptionPlan,
     amount,
     currency: currency || "USD",
-    paymentMethod: paymentMethod || "stripe",
-    paymentStatus: paymentStatus || "pending",
+    paymentMethod: "stripe",
+    paymentStatus: "pending",
     transactionId: session.id,
     notes: notes || "",
   });
   res.status(200).json(
-    new apiResponse(
-      200,
-      {
-        sessionId: session.id,
-        url: session.url,
-        paymentId: payment._id,
-      },
-      "Stripe checkout session created successfully"
-    )
+    new apiResponse(200, {
+      sessionId: session.id,
+      url: session.url,
+      paymentId: payment._id,
+    })
   );
 });
-
-// Verify Payment after checkout
 
 const verifyPayment = asyncHandler(async (req, res) => {
   const { session_id } = req.query;
   if (!session_id) {
     throw new apiErrors(400, "Session_id is required");
   }
-
   const session = await stripe.checkout.sessions.retrieve(session_id);
   console.log("Check Payment status", session.payment_status);
   if (session.payment_status !== "paid") {
     throw new apiErrors(400, "Payment not completed");
   }
-
   const updatePayment = await Payment.findOneAndUpdate(
     { transactionId: session_id },
     { paymentStatus: "paid", paymentDate: new Date() },
@@ -107,7 +93,7 @@ const getAllPayments = asyncHandler(async (req, res) => {
     .populate("user", "name email -_id")
     .populate("subscriptionPlan", "name price credits");
   if (!payments) {
-    throw new apiErrors("Payment not found");
+    throw new apiErrors(404, "Payment not found");
   }
   res
     .status(200)

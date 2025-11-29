@@ -8,7 +8,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
-
+import webhookRoute from "./routes/stripeWebhook.route.js";
 // Load environment variables
 dotenv.config();
 
@@ -37,7 +37,8 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again later.",
 });
 app.use("/api", limiter);
-
+// Stripe webhook endpoint url
+app.use("/api/v1/stripe", webhookRoute);
 // Body parser
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));
